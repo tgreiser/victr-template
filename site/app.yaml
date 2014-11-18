@@ -14,7 +14,7 @@ automatic_scaling:
 
 handlers:
 - url: .*/assets/
-  static_dir: Godeps/_workspace/src/github.com/tgreiser/victr/app/assets
+  static_dir: ../Godeps/_workspace/src/github.com/tgreiser/victr/app/assets
   application_readable: true
 
 - url: .*/themes/
