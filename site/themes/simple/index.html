@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Orgname | {{ .Title }}</title>
+    
+    <link href="/themes/simple/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/themes/simple/css/simple.css" rel="stylesheet">
+    <script type="text/javascript" src="/themes/simple/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/themes/simple/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <a href="/">
+              <img class="site-logo" src="/themes/simple/img/logo.png" alt="VICtR" border="0">
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id='ppBody'>
+            {{ .Content }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            &copy; 2014 Your org
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>
