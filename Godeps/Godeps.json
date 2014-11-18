@@ -1,0 +1,69 @@
+{
+	"ImportPath": "github.com/tgreiser/victr-template/site",
+	"GoVersion": "go1.3.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/clbanning/x2j",
+			"Rev": "0e45c2228aab9921ef50cc7d0bf7186082cc51a4"
+		},
+		{
+			"ImportPath": "github.com/nicksnyder/go-i18n/i18n",
+			"Rev": "fdd9ce0eff0447ddec6b10625512f49a726418c1"
+		},
+		{
+			"ImportPath": "github.com/russross/blackfriday",
+			"Comment": "v1.2-21-g7c8f3c1",
+			"Rev": "7c8f3c1dcc7e0f87c62af34ee193fc3251f6d8a4"
+		},
+		{
+			"ImportPath": "github.com/stretchr/codecs",
+			"Rev": "8e29b38960a541ed1264b001dcb21701283c590d"
+		},
+		{
+			"ImportPath": "github.com/stretchr/goweb",
+			"Comment": "v2-73-gd7518e7",
+			"Rev": "d7518e7a1cf8f0b11605aa2a90319936689a8b5e"
+		},
+		{
+			"ImportPath": "github.com/stretchr/objx",
+			"Rev": "cbeaeb16a013161a98496fad62933b1d21786672"
+		},
+		{
+			"ImportPath": "github.com/stretchr/stew/strings",
+			"Rev": "80ef0842b48b329a6120607c817a85aff5a2ec71"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Rev": "d6577e08ec30538639ac0ea38b562b6f250e9055"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/http",
+			"Rev": "d6577e08ec30538639ac0ea38b562b6f250e9055"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/mock",
+			"Rev": "d6577e08ec30538639ac0ea38b562b6f250e9055"
+		},
+		{
+			"ImportPath": "github.com/tgreiser/victr/app",
+			"Rev": "d5c70187b18a32baed8241f3cf2ccb0add8dd274"
+		},
+		{
+			"ImportPath": "github.com/tgreiser/victr/context",
+			"Rev": "d5c70187b18a32baed8241f3cf2ccb0add8dd274"
+		},
+		{
+			"ImportPath": "github.com/tgreiser/victr/controllers",
+			"Rev": "d5c70187b18a32baed8241f3cf2ccb0add8dd274"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Rev": "a7f0616e8cd41d08149bec05c87524abe4e0520e"
+		},
+		{
+			"ImportPath": "labix.org/v2/mgo/bson",
+			"Comment": "287",
+			"Rev": "gustavo@niemeyer.net-20140501184651-975yyw9ipld92pji"
+		}
+	]
+}

@@ -1,0 +1,38 @@
+{{ define "form" }}
+  <form method="POST" action="/content/">
+{{ end }}
+{{ define "nav-form" }}
+    <input type="submit" class="btn btn-default" value="View Draft" />
+{{ end }}
+
+{{ define "page" }}
+<!-- Le input -->
+  <ul>
+    <li class="form-group">
+      <label for="title">Page Title:</label>
+      <input type="text" name="title" />
+    </li>
+    <li class="form-group">
+      <label for="path">Publish to Path:</label>
+      <input type="text" name="path" placeholder="index.html" />
+    </li>
+    <li class="form-group">
+      <textarea id="pagedownMe" name="content" class="form-control" rows="10">
+This is the *first* editor.
+------------------------------
+ 
+Just plain **Markdown**, except that the input is sanitized:
+ 
+<marquee>I'm the ghost from the past!</marquee>
+      </textarea>
+    </li>
+  </ul>
+</form>
+
+    <!-- Le lift -->
+    <script type="text/javascript">
+$( document ).ready(function() { 
+  $("textarea#pagedownMe").pagedownBootstrap();
+});
+    </script>
+{{end}}
