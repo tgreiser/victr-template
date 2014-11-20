@@ -1,0 +1,22 @@
+html body {
+  padding-top: 51px;
+  margin: 0px;
+}
+
+.form-padding {
+  margin: 8px;
+}
+
+.navbar .form-group {
+  float: right;
+  margin: 8px;
+}
+
+ul li.form-group {
+  margin-top: 8px;
+  list-style: none;
+}
+
+.navbar form {
+  margin-bottom: 0px;
+}
