@@ -31,3 +31,21 @@ ul li.form-group {
 .sites td.controls {
   padding-left: 20px;
 }
+
+.meta-data {
+  padding: 16px;
+}
+.meta-data .form-group {
+  float: left;
+  padding-right: 14px;
+}
+.meta-data .form-wide {
+  width: 97%;
+  clear: both;
+}
+.meta-data .form-group label {
+}
+
+html body .alert {
+  padding: 8px;
+}

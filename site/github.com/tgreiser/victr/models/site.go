@@ -3,6 +3,7 @@ package models
 import (
   "appengine"
   "appengine/datastore"
+  "time"
 
   mycontext "github.com/tgreiser/victr/context"
 )
@@ -12,7 +13,7 @@ func NewSiteKey(wc mycontext.Context, url string) *datastore.Key {
 }
 
 func FetchSites(wc mycontext.Context, limit, offset int) ([]*Site, error) {
-  q := datastore.NewQuery("Site").Order("Name").Limit(limit).Offset(offset)
+  q := datastore.NewQuery("Site").Order("-CreatedAt").Limit(limit).Offset(offset)
   sites := make([]*Site, 0, limit)
   keys, err := q.GetAll(wc.Aec, &sites)
   if _, ok := err.(*datastore.ErrFieldMismatch); ok {
@@ -29,6 +30,15 @@ func FetchSites(wc mycontext.Context, limit, offset int) ([]*Site, error) {
   return sites, err
 }
 
+func FindSiteFromEnc(wc mycontext.Context, enc string, s *Site) error {
+  k, err := datastore.DecodeKey(enc)
+  if err != nil {
+    wc.Aec.Errorf("failed to decode key: %v %v", enc, err)
+    return err
+  }
+  return FindSite(wc, k, s)
+}
+
 func FindSite(wc mycontext.Context, k *datastore.Key, s *Site) error {
   if err := datastore.Get(wc.Aec, k, s); err != nil {
     if err != datastore.ErrNoSuchEntity {
@@ -41,10 +51,13 @@ func FindSite(wc mycontext.Context, k *datastore.Key, s *Site) error {
 }
 
 type Site struct {
-  Key *datastore.Key
+  Key *datastore.Key `datastore:"-"`
   Name string
   URL string
   Bucket string
+  Theme string
+  CreatedAt time.Time
+  UpdatedAt time.Time
 }
 
 func (s *Site) Validate() map[string]string {
@@ -59,12 +72,15 @@ func (s *Site) Validate() map[string]string {
   if s.Bucket == "" {
     ret["bucket"] = "Please enter the site bucket"
   }
+  if s.Theme == "" {  ret["theme"] = "Please pick a default theme" }
 
   return ret
 }
 
 func (s *Site) Save(wc mycontext.Context, key *datastore.Key) error {
   err := datastore.RunInTransaction(wc.Aec, func(aec appengine.Context) error {
+    if s.Key == nil { s.CreatedAt = time.Now() }
+    s.UpdatedAt = time.Now()
     key, e := datastore.Put(aec, key, s)
     if e != nil {
       return e
