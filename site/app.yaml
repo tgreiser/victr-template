@@ -4,8 +4,8 @@ api_version: go1
 threadsafe: true
 
 handlers:
-- url: .*/assets/
-  static_dir: github.com/tgreiser/victr/app/assets
+- url: .*/victr_assets/
+  static_dir: github.com/tgreiser/victr/app/victr_assets
   application_readable: true
 
 - url: .*/themes/
