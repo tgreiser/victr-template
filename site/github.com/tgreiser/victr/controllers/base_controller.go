@@ -20,11 +20,18 @@ func (ctrl *BaseController) render(wc mycontext.Context, main string, data inter
   t := template.New("temp").Funcs(ctrl.funcMap())
   t = template.Must(t.ParseFiles(matches...))
   var nav bytes.Buffer
-  t.ExecuteTemplate(&nav, "nav-form", data )
+  if e := t.ExecuteTemplate(&nav, "nav-form", data ); e != nil {
+    wc.Aec.Errorf("Template err: %v", e)
+  }
   var form bytes.Buffer
-  t.ExecuteTemplate(&form, "form", data)
+  if e := t.ExecuteTemplate(&form, "form", data); e != nil {
+    wc.Aec.Errorf("Template err: %v", e)
+  }
+
   var page bytes.Buffer
-  t.ExecuteTemplate(&page, "page", data)
+  if e := t.ExecuteTemplate(&page, "page", data); e != nil {
+    wc.Aec.Errorf("Template err: %v", e)
+  }
 
   var output bytes.Buffer
   pagedata := struct {
@@ -38,29 +45,29 @@ func (ctrl *BaseController) render(wc mycontext.Context, main string, data inter
     template.HTML(nav.String()),
     template.HTML(page.String()),
   }
-  wc.Aec.Infof("Got nav: %v", pagedata.NavForm)
   if e := t.ExecuteTemplate(&output, "base", pagedata); e != nil {
     // unfortunately, this doesn't seem to fire if the template crashes mid-render due to a func error
-    wc.Aec.Errorf("Failed to render: %v", e)
-    return ctrl.error(wc, "err_serious")
+    return ctrl.error(wc, "err_serious", e)
   }
 
   return goweb.Respond.With(wc.Ctx, 200, output.Bytes())
 }
 
-func (ctrl *BaseController) error(wc mycontext.Context, msg_id string) error {
+func (ctrl *BaseController) error(wc mycontext.Context, msg_id string, err error) error {
   data := struct {
     Message string
   } {
     wc.T(msg_id),
   }
+  wc.Aec.Errorf("%v: %v", data.Message, err)
   return ctrl.render(wc, "error", data)
 }
 
 func (ctrl *BaseController) templates(wc mycontext.Context, main string) ([]string, error) {
-  var matches [2]string
-  matches[0] = mycontext.AppPath(filepath.Join("views", main + ".html"))
-  matches[1] = mycontext.AppPath(filepath.Join("views", "base.html"))
+  var matches [3]string
+  matches[0] = mycontext.AppPath(filepath.Join("views", "partials.html"))
+  matches[1] = mycontext.AppPath(filepath.Join("views", main + ".html"))
+  matches[2] = mycontext.AppPath(filepath.Join("views", "base.html"))
   return matches[0:], nil
 }
 

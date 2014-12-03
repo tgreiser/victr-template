@@ -56,7 +56,7 @@ func (ctrl *SitesController) fetchThemes(wc mycontext.Context, sel string) ([]*m
   themes, err := models.FetchThemes(wc, sel)
   if err != nil || len(themes) == 0 {
     wc.Aec.Errorf("error fetching themes, panic: %v", err)
-    return nil, ctrl.error(wc, "err_no_themes")
+    return nil, ctrl.error(wc, "err_no_themes", err)
   }
   wc.Aec.Infof("Returned %v themes", len(themes))
   return themes, nil
@@ -116,7 +116,7 @@ func (ctrl *SitesController) Create(c context.Context) error {
 
   // save
   wc.Aec.Infof("Saving...")
-  if err := site.Save(wc, models.NewSiteKey(wc, site.URL)); err != nil {
+  if err := site.Save(wc, models.NewSiteKey(wc)); err != nil {
     msg := "Failed to save"
     wc.Aec.Errorf("msg %v", err)
     return ctrl.renderSites(wc, msg, map[string]string { }, site)
