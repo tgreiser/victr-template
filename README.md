@@ -12,7 +12,7 @@ may not yet be practically useful for most people.
 
     * site/ - everything lives here
     * site/app.yaml - appengine configuration file for your site generator
-    * site/themes/ - make one or more directories here to hold your themes. DO NOT USE "simple", make a copy if you must.
+    * site/themes/ - make one or more directories here to hold your themes. Use the same name as your cloud storage bucket (probably also your domain name).
 
 ### Updating
 
