@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Orgname | {{ .Title }}</title>
+    
+    <link href="{{ .ThemePath }}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ .ThemePath }}/css/simple.css" rel="stylesheet">
+    <script type="text/javascript" src="{{ .ThemePath }}/js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ .ThemePath }}/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id='ppBody'>
+            {{ .Content }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            &copy; 2014 Your org
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>
