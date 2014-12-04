@@ -1,5 +1,4 @@
 {{ define "form" }}
-  <form method="GET" action="/content/">
 {{ end }}
 {{ define "nav-form" }}
 {{ end }}
@@ -19,6 +18,7 @@
         <th>Created</th>
         <th>&nbsp;</th>
       </tr>
+    {{ $site := .Site }}
     {{ range $i, $elem := .Pages }}
       <tr>
         <td>
@@ -34,13 +34,21 @@
         <td class="controls">
           <a href="/content/{{$elem.NiceKey}}" class="btn btn-default">Edit</a>
           {{if $elem.Published }}
-            <a href="/content/unpublish/{{$elem.NiceKey}}" class="btn btn-warning">Unpublish</a>
+            <form method="post" action="/content/unpublish">
+              <!-- input type="submit" class="btn btn-warning" value="Unpublish" name="action" / -->
+              <input type="hidden" name="key" value="{{$elem.Key.Encode}}" />
+            </form>
           {{else}}
-            <a href="/content/publish/{{$elem.NiceKey}}" class="btn btn-warning">Publish</a>
+            <form method="post" action="/content/publish">
+              <input type="submit" class="btn btn-warning" value="Publish" name="action" />
+              <input type="hidden" name="key" value="{{$elem.Key.Encode}}" />
+            </form>
+            <a href="/content/preview/{{$site.Bucket}}/{{$elem.Path}}" target="_blank" class="btn btn-default">Preview</a>
           {{end}}
         </td>
       </tr>
     {{ end }}
     </table>
   </div>
+  <form method="GET" action="/content/">
 {{ end }}

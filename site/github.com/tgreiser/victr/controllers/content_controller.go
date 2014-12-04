@@ -7,6 +7,7 @@ import (
   "fmt"
   "html/template"
   "net/http"
+  "time"
 
   "code.google.com/p/google-api-go-client/storage/v1"
   "github.com/golang/oauth2"
@@ -78,7 +79,9 @@ func (ctrl *ContentController) renderRead(wc mycontext.Context, message string, 
   if err != nil { return ctrl.error(wc, "err_serious", err) }
   sites, def_site, err := ctrl.prepSites(wc)
   if err != nil { return ctrl.error(wc, "err_serious", err) }
-  themes, err := models.FetchThemes(wc, def_site.Bucket, def_site.Theme)
+  thm := def_site.Theme
+  if content != nil { thm = content.Theme }
+  themes, err := models.FetchThemes(wc, def_site.Bucket, thm)
   if err != nil || len(themes) == 0 {
     return ctrl.error(wc, "err_no_themes", err)
   }
@@ -127,10 +130,12 @@ func (ctrl *ContentController) renderReadMany(wc mycontext.Context, msg string) 
     Pages []*models.Page
     Sites []*models.Site
     Message template.HTML
+    Site *models.Site
   } {
     pages,
     sites,
     template.HTML(msg),
+    def_site,
   })
 }
 
@@ -235,7 +240,12 @@ func (ctrl *ContentController) Create(c context.Context) error {
     wc.Aec.Errorf("%v: %v", msg, err)
     return ctrl.renderNew(wc, msg, map[string]string{}, content, page)
   }
+  // Have to sleep here or the datastore won't have our data ready for us on redirect
+  time.Sleep(200 * time.Millisecond)
+  return goweb.Respond.WithRedirect(wc.Ctx, "/content/preview/" + page.Site + "/" + page.Path)
+}
 
+func (ctrl *ContentController) renderDraft(wc mycontext.Context, content *models.Content, page *models.Page) error {
   output := content.Build(wc)
   pagedata := struct {
     Draft template.HTML
@@ -249,7 +259,7 @@ func (ctrl *ContentController) Create(c context.Context) error {
     content.Title,
     content.Markdown,
     page.Path,
-    content.Key.Encode(),
+    page.Key.Encode(),
     models.NiceKey(page.Key),
   }
   return ctrl.render(wc, "draft", pagedata)
@@ -263,20 +273,21 @@ func (ctrl *ContentController) Create(c context.Context) error {
 func (ctrl *ContentController) Publish(c context.Context) error {
   wc := mycontext.NewContext(c)
 
+  // this controller is poorly named but we are really loading a page, not a content
   key, err := datastore.DecodeKey(wc.Ctx.FormValue("key"))
   if err != nil {
     wc.Aec.Errorf("Failed to decode site key, can not publish: %v %v", wc.Ctx.FormValue("key"), err)
     return ctrl.renderNew(wc, "Could not publish", map[string]string{}, nil, nil)
   }
-  var content models.Content
-  if err := models.FindContent(wc, key, &content); err != nil {
-    wc.Aec.Errorf("Failed to load content, could not publish: %v %v", key, err)
+  var page models.Page
+  if err := models.FindPage(wc, key, &page); err != nil {
+    wc.Aec.Errorf("Failed to load page, could not publish: %v %v", key, err)
     return ctrl.renderNew(wc, "Could not publish", map[string]string{}, nil, nil)
   }
-  var page models.Page
-  if err := models.FindPage(wc, content.PageKey, &page); err != nil {
-    wc.Aec.Errorf("Failed to load page, could not publish: %v %v", key, err)
-    return ctrl.renderNew(wc, "Could not publish", map[string]string{}, &content, nil)
+  var content models.Content
+  if err := models.FindContent(wc, page.CurrentVersionKey, &content); err != nil {
+    wc.Aec.Errorf("Failed to load content, could not publish: %v %v", key, err)
+    return ctrl.renderNew(wc, "Could not publish", map[string]string{}, nil, &page)
   }
   output := content.Build(wc)
 
@@ -343,4 +354,25 @@ func (ctrl *ContentController) Publish(c context.Context) error {
 
   msg := "Page published at <a href=\"" + page.LiveUrl(wc) + "\" target=\"_blank\">" + page.LiveUrl(wc) +"</a>"
   return ctrl.renderReadMany(wc, msg)
+}
+
+func (ctrl *ContentController) Preview(c context.Context) error {
+  wc := mycontext.NewContext(c)
+  path := wc.Ctx.PathParams().Get("path").Str() + ".html"
+  bucket := wc.Ctx.PathParams().Get("site").Str()
+  page, err := models.FetchPageByBucketAndPath(wc, bucket, path)
+  if err != nil {
+    msg := "Could not load page"
+    wc.Aec.Errorf("%v: %v", msg, err)
+    return ctrl.renderReadMany(wc, msg)
+  }
+
+  content := &models.Content{}
+  if err := models.FindContent(wc, page.CurrentVersionKey, content); err != nil {
+    msg := "Failed to load content, could not publish"
+    wc.Aec.Errorf("%v: %v %v", msg, page.CurrentVersionKey, err)
+    return ctrl.renderReadMany(wc, msg)
+  }
+  wc.Aec.Infof("Preview: %v %v", bucket, path)
+  return ctrl.renderDraft(wc, content, page)
 }
