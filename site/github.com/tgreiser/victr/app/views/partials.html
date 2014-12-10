@@ -25,6 +25,13 @@
       <input type="text" name="path" class="form-control" placeholder="index.html" value="{{if .Page }}{{ .Page.Path }}{{end}}" />
       {{ fg_close "path" .Errors }}
 
+    <div class="form-wide" style="padding-bottom: 5px;">
+      <button data-toggle="modal" data-target="#imageManagerDialog" class="btn btn-primary btn-large">Image Manager</button>
+
+      <!-- button type="button" class="btn btn-default" id="victr-image-browse">Upload Image</button>
+      <span id="upload-status"></span -->
+    </div>
+
     <div class="form-wide">
       <textarea id="pagedownMe" name="content" class="form-control" rows="10">{{ .Content.Markdown }}
       </textarea>
@@ -33,8 +40,48 @@
     <!-- Le lift -->
     <script type="text/javascript">
 $( document ).ready(function() {
-  $("textarea#pagedownMe").pagedownBootstrap();
+    $("textarea#pagedownMe").pagedownBootstrap({
+      "sanitize": false,
+      });
+
+//  $('#upload').fileUpload();
+
+  $('#imageManagerDialog').bind('show', function () {
+    //   document.getElementById ("xlInput").value = document.title;
+  });
 });
+
+function closeDialog () {
+  $('#imageManagerDialog').modal('hide');
+};
+function okClicked () {
+  //  document.title = document.getElementById ("xlInput").value;
+  var converter = new Markdown.Converter();
+  var html = converter.makeHtml($('#wmd-input-0').val());
+  $('#wmd-preview-0')[0].innerHTML = html;
+  closeDialog ();
+};
     </script>
+  </form>
+
+  <div id="imageManagerDialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="windowTitleLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a href="#" class="close" data-dismiss="modal">&times;</a>
+          <h3>Image Manager</h3>
+        </div>
+        <div class="modal-body">
+          <div class="divDialogElements">
+            <iframe class="files" src="/files/?bucket={{.Bucket}}&path={{.ImagePath}}"></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn" onclick="closeDialog ();">Cancel</a>
+          <a href="#" class="btn btn-primary" onclick="okClicked ();">OK</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {{ end }}
